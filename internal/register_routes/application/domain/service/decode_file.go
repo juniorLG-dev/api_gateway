@@ -8,16 +8,21 @@ import (
 	"encoding/json"
 )
 
-func DecodeFile(reader io.Reader) (dto.RouteJSON, *handler_err.InfoErr) {
+func DecodeFile(reader io.Reader) ([]dto.RouteJSON, *handler_err.InfoErr) {
 	decoder := json.NewDecoder(reader)
-	var routeJSON dto.RouteJSON
+	var routesJSON []dto.RouteJSON
 
-	if err := decoder.Decode(&routeJSON); err != nil {
-		return dto.RouteJSON{}, &handler_err.InfoErr{
-			Message: "error decoding json",
-			Err: handler_err.ErrInternal,
+	for decoder.More() {
+		var routeJSON dto.RouteJSON
+		if err := decoder.Decode(&routeJSON); err != nil {
+			return []dto.RouteJSON{}, &handler_err.InfoErr{
+				Message: "eror decoding json",
+				Err: handler_err.ErrInternal,
+			}
 		}
+
+		routesJSON = append(routesJSON, routeJSON)
 	}
 
-	return routeJSON, &handler_err.InfoErr{}
+	return routesJSON, &handler_err.InfoErr{}
 }

@@ -18,6 +18,7 @@ func main() {
 	router := gin.Default()
 
 	http_launcher.InitRegisterRoutes(db, &router.RouterGroup)
+	http_launcher.InitDynamicRouting(db, &router.RouterGroup)
 
 	router.Run(":8080")
 }

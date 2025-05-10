@@ -6,18 +6,18 @@ import (
 )
 
 type Route struct {
-	ID 				 vo.ID
-	APIName    string
-	Path 			 string
-	ServiceURL vo.ServiceURL
-	Method     string
+	ID 				 	 vo.ID
+	Path 			 	 string
+	ServiceURL 	 vo.ServiceURL
+	Method     	 string
+	APIServiceID string
 }
 
 func NewRoute(
-	APIName    string,
 	path 			 string,
 	service 	 string,
 	method 		 string,
+	apiServiceID string,
 ) (*Route, *handler_err.InfoErr) {
 	serviceURL, msgErr := vo.NewServiceURL(service)
 	if msgErr.Err != nil {
@@ -26,9 +26,29 @@ func NewRoute(
 
 	return &Route{
 		ID: *vo.NewID(),
-		APIName: APIName,
 		Path: path,
 		ServiceURL: *serviceURL,
 		Method: method,
+		APIServiceID: apiServiceID,
 	}, &handler_err.InfoErr{}
+}
+
+func (r *Route) GetID() string {
+	return r.ID.Value
+}
+
+func (r *Route) GetPath() string {
+	return r.Path
+}
+
+func (r *Route) GetServiceURL() string {
+	return r.ServiceURL.Value
+}
+
+func (r *Route) GetMethod() string {
+	return r.Method
+}
+
+func (r *Route) GetAPIServiceID() string {
+	return r.APIServiceID
 }

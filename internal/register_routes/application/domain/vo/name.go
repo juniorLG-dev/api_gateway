@@ -19,8 +19,8 @@ func NewName(name string) (*Name, *handler_err.InfoErr) {
 		}, &handler_err.InfoErr{}
 	}
 
-	return &Namee{}, &handler_err.InfoErr{
-		Message: "your service name can only contain letters (upper or lower case), numbers (0-9) and these two special characters: "_" and "-". It cannot have spaces",
+	return &Name{}, &handler_err.InfoErr{
+		Message: "your service name can only contain letters (upper or lower case), numbers (0-9) and these two special characters: \"_\" and \"-\". It cannot have spaces",
 		Err: handler_err.ErrInvalidInput,
 	}
 }

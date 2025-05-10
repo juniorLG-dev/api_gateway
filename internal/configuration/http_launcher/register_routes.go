@@ -13,11 +13,13 @@ import (
 
 func InitRegisterRoutes(db *gorm.DB, router *gin.RouterGroup) {
 	repository := repository.NewRepository(db)
+	createService := usecase.NewCreateAPIService(repository)
 	createRoute := usecase.NewCreateRoute(repository)
-	getRoutesByName := query.NewGetRouteByName(db)
+	getRoutesByServiceID := query.NewGetRouteByServiceID(db)
 	controller := controller.NewController(
+		*createService,
 		*createRoute,
-		*getRoutesByName,
+		*getRoutesByServiceID,
 	)
 	routes.InitRoutes(router, controller)
 }

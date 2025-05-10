@@ -3,33 +3,56 @@ package controller
 import (
 	"gateway/internal/register_routes/application/usecase"
 	"gateway/internal/register_routes/application/query"
+	"gateway/internal/register_routes/application/dto"
 	"gateway/internal/configuration/handler_err"
-	"gateway/internal/register_routes/adapter/input/dto"
+	"gateway/internal/register_routes/adapter/input/model/request"
+	"gateway/internal/register_routes/adapter/input/model/response"
 
 	"github.com/gin-gonic/gin"
 	
 	"net/http"
-	"fmt"
 )
 
 type controller struct {
-	createRoute 	 usecase.CreateRoute
-	getRouteByName query.GetRouteByName
+	createAPIService 		 usecase.CreateAPIService
+	createRoute 	   		 usecase.CreateRoute
+	getRouteByServiceID 	 query.GetRouteByServiceID
 }
 
 func NewController(
+	createAPIService usecase.CreateAPIService,
 	createRoute usecase.CreateRoute,
-	getRouteByName query.GetRouteByName,
+	getRouteByServiceID query.GetRouteByServiceID,
 ) *controller {
 	return &controller{
+		createAPIService: createAPIService,
 		createRoute: createRoute,
-		getRouteByName: getRouteByName,
+		getRouteByServiceID: getRouteByServiceID,
 	}
 }
 
 type PortController interface {
+	CreateAPIService(c *gin.Context)
 	CreateRoute(c *gin.Context)
-	GetRoutesByName(c *gin.Context)
+	GetRoutesByServiceID(c *gin.Context)
+}
+
+func (ct *controller) CreateAPIService(c *gin.Context) {
+	var createAPIService request.CreateAPIServiceRequest
+	if err := c.ShouldBindJSON(&createAPIService); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid fields"})
+		return
+	}
+
+	token, infoErr := ct.createAPIService.Run(createAPIService.Name)
+	if infoErr.Err != nil {
+		msgErr := handler_err.HandlerErr(infoErr)
+		c.JSON(msgErr.Status, msgErr)
+		return
+	}
+
+	c.Header("Authorization", token)
+	c.JSON(http.StatusOK, gin.H{"message": "service created"})
 }
 
 func (ct *controller) CreateRoute(c *gin.Context) {
@@ -46,7 +69,13 @@ func (ct *controller) CreateRoute(c *gin.Context) {
 	}
 	defer src.Close()
 
-	if infoErr := ct.createRoute.Run(file.Filename, src); infoErr.Err != nil {
+	createRouteInput := dto.CreateRouteInput{
+		Filename: file.Filename,
+		File: src,
+		Token: c.Request.Header.Get("Authorization"),
+	}
+
+	if infoErr := ct.createRoute.Run(createRouteInput); infoErr.Err != nil {
 		msgErr := handler_err.HandlerErr(infoErr)
 		c.JSON(msgErr.Status, msgErr)
 		return
@@ -55,24 +84,21 @@ func (ct *controller) CreateRoute(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "route created"})
 }
 
-func (ct *controller) GetRoutesByName(c *gin.Context) {
-	apiName := c.Param("apiName")
-
-	routes, infoErr := ct.getRouteByName.Run(apiName)
+func (ct *controller) GetRoutesByServiceID(c *gin.Context) {
+	routes, infoErr := ct.getRouteByServiceID.Run(c.Request.Header.Get("Authorization"))
 	if infoErr.Err != nil {
-		fmt.Println(infoErr)
 		msgErr := handler_err.HandlerErr(infoErr)
 		c.JSON(msgErr.Status, msgErr)
 		return
 	}
 
-	var routesResponse []dto.RouteResponse
+	var routesResponse []response.RouteResponse
 	for _, route := range routes {
-		routeInfo := dto.RouteResponse{
+		routeInfo := response.RouteResponse{
 			ID: route.ID,
-			APIName: route.APIName,
 			Path: route.Path,
 			ServiceURL: route.ServiceURL,
+			Method: route.Method,
 		}
 
 		routesResponse = append(routesResponse, routeInfo)

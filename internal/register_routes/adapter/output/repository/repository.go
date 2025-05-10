@@ -19,26 +19,31 @@ func NewRepository(db *gorm.DB) *repository {
 
 type PortRepository interface {
 	CreateAPIService(entities.APIService) error
-	CreateRoute(entities.Route) error
+	CreateRoute([]entities.Route) error
 }
 
 func (r *repository) CreateAPIService(apiService entities.APIService) error {
 	apiServiceDB := model.APIServiceDB{
-		ID: apiService.ID.Value,
-		Name: apiService.Name.Value,
+		ID: apiService.GetID(),
+		Name: apiService.GetName(),
 	}
 
 	return r.db.Create(&apiServiceDB).Error
 }
 
-func (r *repository) CreateRoute(route entities.Route) error {
-	routeDB := model.RouteDB{
-		ID: route.ID.Value,
-		APIName: route.APIName,
-		Path: route.Path,
-		ServiceURL: route.ServiceURL.Value,
-		Method: route.Method,
+func (r *repository) CreateRoute(routes []entities.Route) error {
+	var routesDB []model.RouteDB
+	for _, route := range routes {
+		routeInfo := model.RouteDB{
+			ID: route.GetID(),
+			Path: route.GetPath(),
+			ServiceURL: route.GetServiceURL(),
+			Method: route.GetMethod(),
+			APIServiceID: route.GetAPIServiceID(),
+		}
+
+		routesDB = append(routesDB, routeInfo)
 	}
 
-	return  r.db.Create(&routeDB).Error
+	return  r.db.Create(&routesDB).Error
 }

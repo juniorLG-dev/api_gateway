@@ -21,3 +21,11 @@ func NewAPIService(name string) (*APIService, *handler_err.InfoErr) {
 		Name: *serviceName,
 	}, &handler_err.InfoErr{}
 }
+
+func (as *APIService) GetID() string {
+	return as.ID.Value
+}
+
+func (as *APIService) GetName() string {
+	return as.Name.Value
+}

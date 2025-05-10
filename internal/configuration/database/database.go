@@ -16,7 +16,7 @@ func SetupDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	if err = db.AutoMigrate(&model.RouteDB{}); err != nil {
+	if err = db.AutoMigrate(&model.RouteDB{}, &model.APIServiceDB{}); err != nil {
 		return nil, err
 	}
 

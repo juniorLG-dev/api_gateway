@@ -7,6 +7,7 @@ import (
 )
 
 func InitRoutes(rg *gin.RouterGroup, ct controller.PortController) {
+	rg.POST("/service", ct.CreateAPIService)
 	rg.POST("/routes/add", ct.CreateRoute)
-	rg.GET("/routes/:apiName", ct.GetRoutesByName)
+	rg.GET("/routes", ct.GetRoutesByServiceID)
 }
