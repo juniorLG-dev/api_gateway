@@ -16,7 +16,7 @@ func DecodeFile(reader io.Reader) ([]dto.RouteJSON, *handler_err.InfoErr) {
 		var routeJSON dto.RouteJSON
 		if err := decoder.Decode(&routeJSON); err != nil {
 			return []dto.RouteJSON{}, &handler_err.InfoErr{
-				Message: "eror decoding json",
+				Message: "error decoding json",
 				Err: handler_err.ErrInternal,
 			}
 		}

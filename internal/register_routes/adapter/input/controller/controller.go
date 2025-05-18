@@ -52,7 +52,7 @@ func (ct *controller) CreateAPIService(c *gin.Context) {
 	}
 
 	c.Header("Authorization", token)
-	c.JSON(http.StatusOK, gin.H{"message": "service created"})
+	c.JSON(http.StatusCreated, gin.H{"message": "service created"})
 }
 
 func (ct *controller) CreateRoute(c *gin.Context) {
@@ -81,7 +81,7 @@ func (ct *controller) CreateRoute(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "route created"})
+	c.JSON(http.StatusCreated, gin.H{"message": "route created"})
 }
 
 func (ct *controller) GetRoutesByServiceID(c *gin.Context) {
