@@ -182,6 +182,6 @@ curl -s -X POST -d '{"name": "John Doe"}' localhost:8080/test/register
 ```
 
 ### Response:
-A API não tem umaresposta para suas rotas, ela encaminha a mensagem retornada pelas suas APIs clientes. 
+A API não tem uma resposta para suas rotas, ela encaminha a mensagem retornada pelas suas APIs clientes. 
 
 > OBS: a API pode retornar uma mensagem de erro caso a requisição pras APIs clientes falhem. 
