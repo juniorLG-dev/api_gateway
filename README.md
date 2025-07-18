@@ -58,7 +58,7 @@ Os endpoints são criados de maneira diferente do serviço. Para a criação é 
 
 ### Rotas:
 - Criar endpoint:
-  * Endpoint: **/routes/add**
+  * Endpoint: **/routes**
   * Método: **POST**
 - Buscar endpoints:
   * Endpoint: **/routes**
@@ -66,7 +66,7 @@ Os endpoints são criados de maneira diferente do serviço. Para a criação é 
 
 ---
  
-### Request /routes/add:
+### Request [POST] /routes:
 **Data:**
 |  Campo      |  Tipo  |  Obrigatório  |  Descrição  |
 |:------------|:-------|:--------------|:------------|
@@ -99,10 +99,10 @@ Content-Type: multipart/form-data
 
 **Exemplo de requisição:**
 ```sh
-curl -X POST -H "Authorization: Bearer <seu_token_JWT>" -H "Content-Type: multipart/form-data" -F file=@/caminho/do/arquivo.json localhost:8080/routes/add
+curl -X POST -H "Authorization: Bearer <seu_token_JWT>" -H "Content-Type: multipart/form-data" -F file=@/caminho/do/arquivo.json localhost:8080/routes
 ```
 
-### Response /routes/add
+### Response [POST] /routes:
 
 **Status:**
 * `201` - Created
@@ -119,7 +119,69 @@ HTTP/1.1 201 Created
 Content-Type: application/json; charset=utf-8
 ```
 
+### Request [GET] /routes:
 
+**Header**
+```
+Authorization: Bearer <seu_token_JWT>
+```
 
+**Exemplo de requisição:**
+```sh
+curl -H "Authorization: Bearer <seu_token_JWT> localhost:8080/routes" 
+```
 
+### Response [GET] /routes:
+
+**Status:**
+* `200`- OK
+* `400` - Bad Request
+* `404` - Not Found
+* `500` - Internal Error
+
+**Body:**
+```json
+[
+    {
+        "id": "8d71e5ee-0a17-45e3-afb7-3b29f43b210e",
+        "path": "hello",
+        "service_url": "http://localhost:3333/",
+        "method": "POST"
+    },
+    {
+        "id": "12c09690-cc1e-469f-8e20-9b7fdcc09fd2",
+        "path": "greeting",
+        "service_url": "http://localhost:3333/",
+        "method": "GET"
+    }
+]
+```
   
+**Header:**
+```
+Content-Type: application/json; charset=utf-8
+Content-Length: 235
+```
+
+## Roteamento dinâmico
+O roteamento dinâmico é a etapa na qual o usuário vai utilizar o seu serviço criado pra enviar as requisições pra diferentes rotas e servidores de um mesmo contexto de API. 
+
+### Rotas:
+Como as rotas são dinâmicas, todas as rotas vão ser construídas a partir do seu serviço (contexto) + rota que será acessada. 
+
+**Exemplo:**
+`localhost:8080/service/route`
+* service = meu serviço que criei nas etapas anteriores
+* route = rota que desejo acessar relacionada ao meu serviço
+
+> OBS: o usuário deverá realizar a requisição com o método, corpo e cabeçalho que aquela determinada rota solicita.
+
+**Exemplo de requisição:**
+```sh
+curl -s -X POST -d '{"name": "John Doe"}' localhost:8080/test/register
+```
+
+### Response:
+A API não tem umaresposta para suas rotas, ela encaminha a mensagem retornada pelas suas APIs clientes. 
+
+> OBS: a API pode retornar uma mensagem de erro caso a requisição pras APIs clientes falhem. 
