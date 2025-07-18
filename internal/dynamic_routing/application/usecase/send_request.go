@@ -1,14 +1,14 @@
 package usecase
 
 import (
-	"gateway/internal/dynamic_routing/application/dto"
-	"gateway/internal/dynamic_routing/adapter/output/gateway"
-	"gateway/internal/dynamic_routing/adapter/output/api"
 	"gateway/internal/configuration/handler_err"
+	"gateway/internal/dynamic_routing/adapter/output/api"
+	"gateway/internal/dynamic_routing/adapter/output/gateway"
+	"gateway/internal/dynamic_routing/application/dto"
 
-	"strings"
-	"io/ioutil"
 	"fmt"
+	"io/ioutil"
+	"strings"
 )
 
 type SendRequest struct {
@@ -34,7 +34,7 @@ func (sr *SendRequest) Run(sendRequestInput dto.SendRequestInput) (dto.SendReque
 	if err != nil {
 		return dto.SendRequestOutput{}, &handler_err.InfoErr{
 			Message: "could not read the request body",
-			Err: handler_err.ErrInternal,
+			Err:     handler_err.ErrInternal,
 		}
 	}
 
@@ -45,7 +45,7 @@ func (sr *SendRequest) Run(sendRequestInput dto.SendRequestInput) (dto.SendReque
 	if err != nil {
 		return dto.SendRequestOutput{}, &handler_err.InfoErr{
 			Message: "service not found",
-			Err: handler_err.ErrNotFound,
+			Err:     handler_err.ErrNotFound,
 		}
 	}
 
@@ -53,13 +53,13 @@ func (sr *SendRequest) Run(sendRequestInput dto.SendRequestInput) (dto.SendReque
 	if err != nil {
 		return dto.SendRequestOutput{}, &handler_err.InfoErr{
 			Message: "this path does not exist in this particular service",
-			Err: handler_err.ErrNotFound,
+			Err:     handler_err.ErrNotFound,
 		}
 	}
 
 	backendURL := fmt.Sprintf("%s%s", routeInfo.ServiceURL, pathArray[1])
 	if len(pathArray) > 2 && pathArray[2] != "" {
-		backendURL = fmt.Sprintf("%s%s/%s", routeInfo.ServiceURL, pathArray[1], pathArray[2])	
+		backendURL = fmt.Sprintf("%s%s/%s", routeInfo.ServiceURL, pathArray[1], pathArray[2])
 	}
 
 	apiReq := api.NewAPIReq(
@@ -70,16 +70,17 @@ func (sr *SendRequest) Run(sendRequestInput dto.SendRequestInput) (dto.SendReque
 
 	response, err := apiReq.SendRequest()
 	if err != nil {
+		fmt.Println(err)
 		return dto.SendRequestOutput{}, &handler_err.InfoErr{
 			Message: "could not perform the request",
-			Err: handler_err.ErrInternal,
+			Err:     handler_err.ErrInternal,
 		}
 	}
 
 	responseReturn := dto.SendRequestOutput{
 		Response: response.Response,
-		Status: response.Status,
-		Header: response.Header,
+		Status:   response.Status,
+		Header:   response.Header,
 	}
 
 	return responseReturn, &handler_err.InfoErr{}
