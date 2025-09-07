@@ -1,22 +1,22 @@
 package entities
 
 import (
-	"gateway/internal/register_routes/application/domain/vo"
 	"gateway/internal/configuration/handler_err"
+	"gateway/internal/register_routes/domain/vo"
 )
 
 type Route struct {
-	ID 				 	 vo.ID
-	Path 			 	 string
-	ServiceURL 	 vo.ServiceURL
-	Method     	 string
+	ID           vo.ID
+	Path         string
+	ServiceURL   vo.ServiceURL
+	Method       string
 	APIServiceID string
 }
 
 func NewRoute(
-	path 			 string,
-	service 	 string,
-	method 		 string,
+	path string,
+	service string,
+	method string,
 	apiServiceID string,
 ) (*Route, *handler_err.InfoErr) {
 	serviceURL, msgErr := vo.NewServiceURL(service)
@@ -25,10 +25,10 @@ func NewRoute(
 	}
 
 	return &Route{
-		ID: *vo.NewID(),
-		Path: path,
-		ServiceURL: *serviceURL,
-		Method: method,
+		ID:           *vo.NewID(),
+		Path:         path,
+		ServiceURL:   *serviceURL,
+		Method:       method,
 		APIServiceID: apiServiceID,
 	}, &handler_err.InfoErr{}
 }

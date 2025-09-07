@@ -2,9 +2,9 @@ package usecase
 
 import (
 	"gateway/internal/configuration/handler_err"
-	"gateway/internal/dynamic_routing/adapter/output/api"
-	"gateway/internal/dynamic_routing/adapter/output/gateway"
 	"gateway/internal/dynamic_routing/application/dto"
+	"gateway/internal/dynamic_routing/application/gateway"
+	"gateway/internal/dynamic_routing/infra/api"
 
 	"fmt"
 	"io/ioutil"
@@ -12,10 +12,10 @@ import (
 )
 
 type SendRequest struct {
-	gateway gateway.PortGateway
+	gateway gateway.DynamicRoutingGateway
 }
 
-func NewSendRequest(gateway gateway.PortGateway) *SendRequest {
+func NewSendRequest(gateway gateway.DynamicRoutingGateway) *SendRequest {
 	return &SendRequest{
 		gateway: gateway,
 	}

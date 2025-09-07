@@ -1,12 +1,12 @@
 package entities
 
 import (
-	"gateway/internal/register_routes/application/domain/vo"
 	"gateway/internal/configuration/handler_err"
+	"gateway/internal/register_routes/domain/vo"
 )
 
 type APIService struct {
-	ID 	 vo.ID
+	ID   vo.ID
 	Name vo.Name
 }
 
@@ -17,7 +17,7 @@ func NewAPIService(name string) (*APIService, *handler_err.InfoErr) {
 	}
 
 	return &APIService{
-		ID: *vo.NewID(),
+		ID:   *vo.NewID(),
 		Name: *serviceName,
 	}, &handler_err.InfoErr{}
 }

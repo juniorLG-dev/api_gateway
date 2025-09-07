@@ -1,22 +1,22 @@
-package controller
+package web
 
 import (
-	"gateway/internal/register_routes/application/usecase"
-	"gateway/internal/register_routes/application/query"
-	"gateway/internal/register_routes/application/dto"
 	"gateway/internal/configuration/handler_err"
-	"gateway/internal/register_routes/adapter/input/model/request"
-	"gateway/internal/register_routes/adapter/input/model/response"
+	"gateway/internal/register_routes/application/dto"
+	"gateway/internal/register_routes/application/query"
+	"gateway/internal/register_routes/application/usecase"
+	"gateway/internal/register_routes/infra/web/model/request"
+	"gateway/internal/register_routes/infra/web/model/response"
 
 	"github.com/gin-gonic/gin"
-	
+
 	"net/http"
 )
 
 type controller struct {
-	createAPIService 		 usecase.CreateAPIService
-	createRoute 	   		 usecase.CreateRoute
-	getRouteByServiceID 	 query.GetRouteByServiceID
+	createAPIService    usecase.CreateAPIService
+	createRoute         usecase.CreateRoute
+	getRouteByServiceID query.GetRouteByServiceID
 }
 
 func NewController(
@@ -25,16 +25,10 @@ func NewController(
 	getRouteByServiceID query.GetRouteByServiceID,
 ) *controller {
 	return &controller{
-		createAPIService: createAPIService,
-		createRoute: createRoute,
+		createAPIService:    createAPIService,
+		createRoute:         createRoute,
 		getRouteByServiceID: getRouteByServiceID,
 	}
-}
-
-type PortController interface {
-	CreateAPIService(c *gin.Context)
-	CreateRoute(c *gin.Context)
-	GetRoutesByServiceID(c *gin.Context)
 }
 
 func (ct *controller) CreateAPIService(c *gin.Context) {
@@ -71,8 +65,8 @@ func (ct *controller) CreateRoute(c *gin.Context) {
 
 	createRouteInput := dto.CreateRouteInput{
 		Filename: file.Filename,
-		File: src,
-		Token: c.Request.Header.Get("Authorization"),
+		File:     src,
+		Token:    c.Request.Header.Get("Authorization"),
 	}
 
 	if infoErr := ct.createRoute.Run(createRouteInput); infoErr.Err != nil {
@@ -95,10 +89,10 @@ func (ct *controller) GetRoutesByServiceID(c *gin.Context) {
 	var routesResponse []response.RouteResponse
 	for _, route := range routes {
 		routeInfo := response.RouteResponse{
-			ID: route.ID,
-			Path: route.Path,
+			ID:         route.ID,
+			Path:       route.Path,
 			ServiceURL: route.ServiceURL,
-			Method: route.Method,
+			Method:     route.Method,
 		}
 
 		routesResponse = append(routesResponse, routeInfo)

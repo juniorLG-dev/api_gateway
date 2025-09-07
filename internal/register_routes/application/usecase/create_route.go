@@ -1,18 +1,18 @@
 package usecase
 
 import (
-	"gateway/internal/register_routes/application/domain/entities"
-	"gateway/internal/register_routes/application/domain/service"
-	"gateway/internal/register_routes/application/dto"
-	"gateway/internal/register_routes/adapter/output/repository"
 	"gateway/internal/configuration/handler_err"
+	"gateway/internal/register_routes/application/dto"
+	"gateway/internal/register_routes/application/repository"
+	"gateway/internal/register_routes/domain/entities"
+	"gateway/internal/register_routes/domain/service"
 )
 
 type CreateRoute struct {
-	repository repository.PortRepository
+	repository repository.RegisterRoutesRepository
 }
 
-func NewCreateRoute(repository repository.PortRepository) *CreateRoute {
+func NewCreateRoute(repository repository.RegisterRoutesRepository) *CreateRoute {
 	return &CreateRoute{
 		repository: repository,
 	}
@@ -25,12 +25,11 @@ func (cr *CreateRoute) Run(routeInput dto.CreateRouteInput) *handler_err.InfoErr
 		return msgErr
 	}
 
-
 	checkFile := service.NewCheckFile(routeInput.Filename)
 	if !checkFile.Check(".json") {
 		return &handler_err.InfoErr{
 			Message: "invalid extension",
-			Err: handler_err.ErrInvalidInput,
+			Err:     handler_err.ErrInvalidInput,
 		}
 	}
 
@@ -57,7 +56,7 @@ func (cr *CreateRoute) Run(routeInput dto.CreateRouteInput) *handler_err.InfoErr
 	if err := cr.repository.CreateRoute(routes); err != nil {
 		return &handler_err.InfoErr{
 			Message: "could not create the route",
-			Err: handler_err.ErrInternal,
+			Err:     handler_err.ErrInternal,
 		}
 	}
 

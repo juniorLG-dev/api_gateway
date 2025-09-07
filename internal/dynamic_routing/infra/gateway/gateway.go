@@ -1,7 +1,7 @@
 package gateway
 
 import (
-	"gateway/internal/register_routes/adapter/output/model"
+	"gateway/internal/register_routes/infra/repository"
 
 	"gorm.io/gorm"
 )
@@ -16,32 +16,27 @@ func NewGateway(db *gorm.DB) *gateway {
 	}
 }
 
-type PortGateway interface {
-	GetServiceByName(string) (string, error)
-	GetRouteByServiceAndPath(string, string) (GatewayInfoOutput, error)
-}
-
 type GatewayInfoOutput struct {
-	Path 			 string
+	Path       string
 	ServiceURL string
-	Method 		 string
+	Method     string
 }
 
 func (g *gateway) GetServiceByName(name string) (string, error) {
-	var service model.APIServiceDB
-  err := g.db.First(&service, "name = ?", name).Error
+	var service repository.APIServiceDB
+	err := g.db.First(&service, "name = ?", name).Error
 
-  return service.ID, err
+	return service.ID, err
 }
 
 func (g *gateway) GetRouteByServiceAndPath(serviceID, path string) (GatewayInfoOutput, error) {
-	var route model.RouteDB
+	var route repository.RouteDB
 	err := g.db.Where("api_service_id = ? AND path = ?", serviceID, path).First(&route).Error
 
 	routeOutput := GatewayInfoOutput{
-		Path: path,
+		Path:       path,
 		ServiceURL: route.ServiceURL,
-		Method: route.Method,
+		Method:     route.Method,
 	}
 
 	return routeOutput, err

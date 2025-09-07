@@ -5,13 +5,13 @@ import (
 )
 
 type SendRequestInput struct {
-	Path   			string
+	Path        string
 	ServiceName string
-	Body 				io.Reader
+	Body        io.Reader
 }
 
 type SendRequestOutput struct {
 	Response string
-	Status 	 int
-	Header 	 string
+	Status   int
+	Header   string
 }

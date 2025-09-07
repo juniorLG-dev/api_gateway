@@ -1,23 +1,23 @@
 package service
 
 import (
-	"gateway/internal/register_routes/application/domain/entities"
 	"gateway/internal/configuration/handler_err"
-	
+	"gateway/internal/register_routes/domain/entities"
+
 	"github.com/golang-jwt/jwt"
 
+	"errors"
 	"os"
-	"time"
 	"strings"
-	"errors"	
+	"time"
 )
 
 type TokenInfoDTO struct {
-	ID 					string
+	ID          string
 	ServiceName string
 }
 
-type TokenGenerator struct {}
+type TokenGenerator struct{}
 
 func NewTokenGenerator() *TokenGenerator {
 	return &TokenGenerator{}
@@ -27,9 +27,9 @@ func (tg *TokenGenerator) GenerateToken(apiService entities.APIService) (string,
 	secretKey := os.Getenv("SECRET_KEY")
 
 	claims := jwt.MapClaims{
-		"id": apiService.GetID(),
+		"id":   apiService.GetID(),
 		"name": apiService.GetName(),
-		"exp": time.Now().Add(time.Hour * 5).Unix(),
+		"exp":  time.Now().Add(time.Hour * 5).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -38,7 +38,7 @@ func (tg *TokenGenerator) GenerateToken(apiService entities.APIService) (string,
 	if err != nil {
 		return "", &handler_err.InfoErr{
 			Message: "error creating jwt",
-			Err: handler_err.ErrInternal,
+			Err:     handler_err.ErrInternal,
 		}
 	}
 
@@ -58,7 +58,7 @@ func (tg *TokenGenerator) CheckToken(tokenValue string) (TokenInfoDTO, *handler_
 	if err != nil {
 		return TokenInfoDTO{}, &handler_err.InfoErr{
 			Message: err.Error(),
-			Err: handler_err.ErrInvalidInput,
+			Err:     handler_err.ErrInvalidInput,
 		}
 	}
 
@@ -66,12 +66,12 @@ func (tg *TokenGenerator) CheckToken(tokenValue string) (TokenInfoDTO, *handler_
 	if !ok || !token.Valid {
 		return TokenInfoDTO{}, &handler_err.InfoErr{
 			Message: "invalid token",
-			Err: handler_err.ErrInvalidInput,
+			Err:     handler_err.ErrInvalidInput,
 		}
 	}
 
 	return TokenInfoDTO{
-		ID: claims["id"].(string),
+		ID:          claims["id"].(string),
 		ServiceName: claims["name"].(string),
 	}, &handler_err.InfoErr{}
 }

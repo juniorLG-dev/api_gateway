@@ -1,14 +1,13 @@
 package http_launcher
 
 import (
-	"gateway/internal/register_routes/adapter/output/repository"
-	"gateway/internal/register_routes/adapter/input/controller"
-	"gateway/internal/register_routes/adapter/input/routes"
-	"gateway/internal/register_routes/application/usecase"
 	"gateway/internal/register_routes/application/query"
+	"gateway/internal/register_routes/application/usecase"
+	"gateway/internal/register_routes/infra/repository"
+	"gateway/internal/register_routes/infra/web"
 
-	"gorm.io/gorm"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func InitRegisterRoutes(db *gorm.DB, router *gin.RouterGroup) {
@@ -16,10 +15,10 @@ func InitRegisterRoutes(db *gorm.DB, router *gin.RouterGroup) {
 	createService := usecase.NewCreateAPIService(repository)
 	createRoute := usecase.NewCreateRoute(repository)
 	getRoutesByServiceID := query.NewGetRouteByServiceID(db)
-	controller := controller.NewController(
+	controller := web.NewController(
 		*createService,
 		*createRoute,
 		*getRoutesByServiceID,
 	)
-	routes.InitRoutes(router, controller)
+	web.InitRoutes(router, controller)
 }

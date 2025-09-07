@@ -1,9 +1,9 @@
-package controller 
+package web
 
 import (
-	"gateway/internal/dynamic_routing/application/usecase"
-	"gateway/internal/dynamic_routing/application/dto"
 	"gateway/internal/configuration/handler_err"
+	"gateway/internal/dynamic_routing/application/dto"
+	"gateway/internal/dynamic_routing/application/usecase"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,18 +18,14 @@ func NewController(sendRequest usecase.SendRequest) *controller {
 	}
 }
 
-type PortController interface {
-	SendRequest(c *gin.Context)
-}
-
 func (ct *controller) SendRequest(c *gin.Context) {
 	serviceName := c.Param("serviceName")
 	path := c.Param("path")
 
 	sendRequestInput := dto.SendRequestInput{
-		Path: path,
+		Path:        path,
 		ServiceName: serviceName,
-		Body: c.Request.Body,
+		Body:        c.Request.Body,
 	}
 
 	response, infoErr := ct.sendRequest.Run(sendRequestInput)

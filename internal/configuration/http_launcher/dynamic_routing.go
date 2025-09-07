@@ -1,20 +1,19 @@
 package http_launcher
 
 import (
-	"gateway/internal/dynamic_routing/adapter/output/gateway"
 	"gateway/internal/dynamic_routing/application/usecase"
-	"gateway/internal/dynamic_routing/adapter/input/controller"
-	"gateway/internal/dynamic_routing/adapter/input/routes"
+	"gateway/internal/dynamic_routing/infra/gateway"
+	"gateway/internal/dynamic_routing/infra/web"
 
-	"gorm.io/gorm"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func InitDynamicRouting(db *gorm.DB, router *gin.RouterGroup) {
 	gateway := gateway.NewGateway(db)
 	sendRequest := usecase.NewSendRequest(gateway)
-	controller := controller.NewController(
+	controller := web.NewController(
 		*sendRequest,
 	)
-	routes.InitRoutes(router, controller)
+	web.InitRoutes(router, controller)
 }

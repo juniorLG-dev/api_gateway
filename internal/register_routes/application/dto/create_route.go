@@ -6,6 +6,6 @@ import (
 
 type CreateRouteInput struct {
 	Filename string
-	File 		 io.Reader
+	File     io.Reader
 	Token    string
 }

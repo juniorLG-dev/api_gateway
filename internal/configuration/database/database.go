@@ -1,10 +1,10 @@
 package database
 
 import (
-	"gateway/internal/register_routes/adapter/output/model"
+	"gateway/internal/register_routes/infra/repository"
 
-	"gorm.io/gorm"
 	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 func SetupDB() (*gorm.DB, error) {
@@ -16,7 +16,7 @@ func SetupDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	if err = db.AutoMigrate(&model.RouteDB{}, &model.APIServiceDB{}); err != nil {
+	if err = db.AutoMigrate(&repository.RouteDB{}, &repository.APIServiceDB{}); err != nil {
 		return nil, err
 	}
 
